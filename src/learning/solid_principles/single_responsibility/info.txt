@@ -1,0 +1,15 @@
+The preceding code violates the SRP by conflating two separate responsibilities:
+
+- Navigating the drone
+- Detecting targets in close proximity to the drone»
+
+«As the case may be, this is a valid, working solution. However, the extra coupling that is introduced makes the implementation harder to maintain and extend.
+For instance, what if we want to evaluate different neural network models for object-recognition purposes? What if we want to use the same object recognition code for different Drone types?
+
+So, how can we apply the SRP to improve our design?
+To begin with, while operating under the assumption that all drones come with an on-board camera, we can expose a method on the Drone object
+to capture and return an image using the camera. At this point, you may be thinking: wait, isn't image capturing a different responsibility than navigation? The answer is: it's all a matter of perspective!
+Describing and assigning responsibilities to objects is an art in itself, and quite a subjective one. Conversely, we could counter-argue that navigation needs access to various sources of sensor data, and the camera
+is one of them. In that sense, the proposed refactoring is not violating the SRP.
+
+In a second refactoring step, we can extract the target detection code into a separate, standalone object that would allow us to[…]»

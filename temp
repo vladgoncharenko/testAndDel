@@ -1,0 +1,13 @@
+библиотека для тестирования:
+- testify
+
+линтер:
+- golangci-lint run
+
+
+добавить env переменные в программу:
+DB_PORT=3000 go run src/directory/main.go
+
+выбор либ:
+ - https://go.libhunt.com/categories/463-cofiguration
+ - https://github.com/avelino/awesome-go#configuration

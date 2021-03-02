@@ -1,0 +1,10 @@
+
+запуск бенчмарка:
+ - go test -bench=. .
+ - go test -bench=.  -benchmem .
+
+профайлер создать
+ - 􏰎􏰈go test -bench=. -benchmem -cpuprofile=cpu.out -memprofile=mem.out -x .
+
+ смотреть
+ go tool pprof {название файла, появляется после первой команды}  cpu.out
