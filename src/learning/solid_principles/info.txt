@@ -1,0 +1,6 @@
+Single responsibility - «In any well-designed system, objects should only have a single responsibility.»
+
+Open/closed
+Liskov substitution
+Interface segregation
+Dependency inversion»

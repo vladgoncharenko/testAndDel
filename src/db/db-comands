@@ -1,0 +1,218 @@
+-- https://mockaroo.com/
+
+CREATE table users
+(
+    id            BIGSERIAL   NOT NULL PRIMARY KEY,
+    first_name    varchar(50) NOT NULL,
+    last_name     varchar(50) NOT NULL,
+    gender        varchar(6)  NOT NULL,
+    email         varchar(150),
+    date_of_birth date        NOT NULL
+);
+
+INSERT INTO users(first_name, last_name, gender, email, date_of_birth)
+VALUES ('Kar', 'Man', 'MALE', 'km@mail.com', '2001-01-01');
+
+DROP TABLE employee;
+
+-- сортируем по алфавиту
+SELECT *
+FROM employee
+ORDER BY country_of_birth ASC;
+
+-- сортируем по уникальным
+SELECT DISTINCT country_of_birth
+FROM employee
+ORDER BY country_of_birth;
+
+SELECT *
+FROM employee
+WHERE gender = 'Female'
+  AND (country_of_birth = 'Ukraine' OR country_of_birth = 'Russia');
+
+-- ограничим выборку
+SELECT *
+FROM employee
+LIMIT 20;
+
+-- начать выборку с 20-й позиции
+SELECT *
+FROM employee
+OFFSET 20 LIMIT 20;
+
+-- начать выборку с 20-й позиции и ограничить 5-ю записями
+SELECT *
+FROM employee
+OFFSET 20 FETCH FIRST 5 ROW ONLY;
+
+SELECT *
+FROM employee
+WHERE country_of_birth
+          IN ('Ukraine', 'Albania', 'Brazil');
+
+-- выборка между датами
+SELECT *
+FROM employee
+WHERE date_of_birth
+          BETWEEN '2019-04-01' AND '2020-05-31';
+
+-- выборка по окончанию .gov
+SELECT *
+FROM employee
+WHERE email LIKE '%.gov';
+
+-- выборка по vk
+SELECT *
+FROM employee
+WHERE email LIKE '%vk%';
+
+-- подсчет количества по стране
+SELECT country_of_birth, COUNT(*)
+FROM employee
+GROUP BY country_of_birth
+ORDER BY count(*);
+
+-- подсчет количества по стране где количество больше 10
+SELECT country_of_birth, COUNT(*)
+FROM employee
+GROUP BY country_of_birth
+HAVING COUNT(*) > 10
+ORDER BY country_of_birth DESC;
+
+--alias
+SELECT first_name AS name, last_name AS last
+FROM employee;
+
+--заменяем пустые значения
+SELECT COALESCE(email, 'not applicable')
+FROM employee;
+
+-- максимальное значение
+SELECT MAX(price)
+FROM holiday;
+
+-- минимальное значение
+SELECT MIN(price)
+FROM holiday;
+
+-- среднее значение + округление
+SELECT ROUND(AVG(price))
+FROM holiday;
+
+SELECT destination_coutntry, destination_city, MAX(price)
+FROM holiday
+GROUP BY destination_coutntry, destination_city
+ORDER BY MAX(price) DESC;
+
+-- подсчет суммы
+SELECT SUM(price)
+FROM holiday;
+
+SELECT destination_coutntry, SUM(price)
+FROM holiday
+GROUP BY destination_coutntry;
+
+-- время сейчас
+SELECT NOW();
+
+-- время сейчас, только дата
+SELECT NOW()::DATE;
+
+-- время сейчас, только время
+SELECT NOW()::TIME;
+
+-- время - год (YEAR, MONTHs, DAYS)
+SELECT NOW() - INTERVAL '1 YEAR';
+
+--извлечь год
+SELECT EXTRACT(YEAR FROM NOW());
+
+--извлечь месяц
+SELECT EXTRACT(MONTHS FROM date_of_birth)
+FROM employee;
+
+-- возраст
+SELECT first_name, last_name, country_of_birth, AGE(date_of_birth) AS age
+FROM employee;
+
+-- ALTER TABLE employee; изменить таблицу
+ALTER TABLE employee
+    ADD PRIMARY KEY (id);
+
+SELECT email, COUNT(*)
+FROM employee
+GROUP BY email;
+
+-- выборка где количество больше 1
+SELECT email, COUNT(*)
+FROM employee
+GROUP BY email
+HAVING COUNT(*) > 1;
+
+ALTER SEQUENCE employee_id_seq RESTART WITH 1001;
+
+insert into employee (first_name, last_name, email, gender, date_of_birth, country_of_birth)
+values ('Rosalinde', 'Turville', 'rturville0@hostgator.com', 'Female', '2020-05-13', 'Montenegro');
+
+-- добавляем ограничение по полю email (теперь оно уникальное)
+ALTER TABLE employee
+    ADD CONSTRAINT unique_email_address UNIQUE (email);
+
+-- добавляем ограничение chek (выбор из нескольких значений)
+ALTER TABLE employee
+    ADD CONSTRAINT gender_constraint CHECK ( gender = 'Female' OR gender = 'Male');
+
+SELECT *
+FROM employee
+WHERE email LIKE '%google%'
+  AND country_of_birth = 'China';
+
+DELETE
+FROM employee
+WHERE email LIKE '%google%'
+  AND country_of_birth = 'China';
+
+CREATE TABLE bicycle
+(
+    id    BIGSERIAL      NOT NULL PRIMARY KEY,
+    make  varchar(100)   NOT NULL,
+    type  varchar(100)   NOT NULL,
+    price numeric(19, 2) NOT NULL
+);
+
+-- добавляем новое поле которое буде ссылаться на id в таблице bicycle
+ALTER TABLE employee
+    ADD bicycle_id BIGINT
+        REFERENCES bicycle (id);
+
+-- делаем поле bicycle_id уникальным
+ALTER TABLE employee
+    ADD UNIQUE (bicycle_id);
+
+INSERT INTO bicycle (make, type, price)
+VALUES ('bromtom', 'Hybrid', 190.00);
+
+UPDATE employee SET bicycle_id = 3
+WHERE id = 7;
+
+SELECT * FROM employee
+WHERE id = 7;
+
+SELECT * FROM employee
+JOIN bicycle b on b.id = employee.bicycle_id;
+
+SELECT * FROM employee
+LEFT JOIN bicycle b on b.id = employee.bicycle_id
+LIMIT 10;
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE passport (
+    passport_id uuid NOT NULL primary key ,
+    issue_data date NOT NULL,
+    expired date NOT NULL,
+    country varchar(150) NOT NULL
+);
+
+INSERT INTO passport (passport_id, issue_data, expired, country)
+VALUES (uuid_generate_v4(), '2000-10-01', '2020-10-01', 'USA');
